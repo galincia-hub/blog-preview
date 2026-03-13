@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CruiseStudio Blog Preview</title>
+<style>
+:root{
+  --bg:#0a0c10;--s:#10141c;--b:#1a1f2e;--t:#e8ecf4;--m:#7a8399;
+  --gold:#c9a84c;--gold-dim:#7a6030;--blue:#5ca4e8;--teal:#3dbfb0;
+  --rose:#e06070;--purple:#9b6fe0;--sage:#5ba87a;
+  --border:rgba(201,168,76,.15);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--t);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Noto Sans KR",sans-serif;min-height:100vh;padding:40px 20px}
+a{text-decoration:none;color:inherit}
+
+/* HEADER */
+.header{max-width:1120px;margin:0 auto 48px;display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--border);padding-bottom:24px}
+.logo-wrap{display:flex;align-items:center;gap:14px}
+.logo-icon{width:46px;height:46px;background:linear-gradient(135deg,#1a1506,#332c10);border:1px solid var(--gold-dim);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.logo-title{font-size:19px;font-weight:700;letter-spacing:-.4px;color:var(--t)}
+.logo-sub{font-size:11px;color:var(--gold);margin-top:3px;letter-spacing:.5px}
+.logo-count{font-size:10px;color:var(--m);margin-top:4px}
+.header-right{text-align:right}
+.header-date{font-size:11px;color:var(--m)}
+.header-stat{font-size:22px;font-weight:300;color:var(--gold);margin-top:2px}
+.header-stat span{font-size:11px;color:var(--m);font-weight:400}
+
+/* FILTER BAR */
+.filter-bar{max-width:1120px;margin:0 auto 32px;display:flex;gap:8px;flex-wrap:wrap}
+.f-btn{font-size:11px;padding:6px 14px;border-radius:20px;border:1px solid var(--b);color:var(--m);background:var(--s);cursor:pointer;transition:all .15s;letter-spacing:.2px}
+.f-btn:hover,.f-btn.active{border-color:var(--gold-dim);color:var(--gold);background:rgba(201,168,76,.08)}
+.f-btn.active{font-weight:600}
+
+/* SECTION */
+.container{max-width:1120px;margin:0 auto}
+.section{margin-bottom:40px}
+.sec-hdr{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.sec-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.sec-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--m);font-weight:600}
+.sec-line{flex:1;height:1px;background:var(--b)}
+.sec-cnt{font-size:10px;color:var(--m);background:var(--b);padding:2px 8px;border-radius:10px}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:10px}
+
+/* CARD */
+.card{background:var(--s);border:1px solid var(--b);border-radius:12px;padding:20px;display:block;transition:all .18s;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--cc,#444);opacity:0;transition:opacity .18s}
+.card:hover{border-color:rgba(201,168,76,.3);transform:translateY(-2px);box-shadow:0 12px 36px rgba(0,0,0,.5)}
+.card:hover::before{opacity:1}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.card-badge{font-size:9px;padding:3px 8px;border-radius:10px;border:1px solid var(--bb,#333);color:var(--bc,#888);background:var(--bg2,rgba(0,0,0,.2));letter-spacing:.3px;white-space:nowrap}
+.card-ver{font-size:9px;color:var(--m);background:var(--b);padding:2px 6px;border-radius:8px;margin-top:4px;display:inline-block}
+.card-title{font-size:13.5px;font-weight:600;line-height:1.5;color:var(--t);margin-bottom:8px}
+.card-em{color:var(--gold)}
+.card-date{font-size:10px;color:var(--m);display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--b)}
+.card-file{font-size:9px;color:var(--m);font-family:monospace;opacity:.6;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-arrow{font-size:12px;color:var(--gold);opacity:0;transition:opacity .18s,transform .18s}
+.card:hover .card-arrow{opacity:1;transform:translateX(3px)}
+
+/* STATS BAR */
+.stats{background:var(--s);border:1px solid var(--b);border-radius:12px;padding:16px 24px;margin-bottom:32px;display:flex;gap:32px;flex-wrap:wrap;align-items:center}
+.stat-item{display:flex;flex-direction:column;gap:2px}
+.stat-val{font-size:20px;font-weight:300;color:var(--gold)}
+.stat-lbl{font-size:10px;color:var(--m);text-transform:uppercase;letter-spacing:1px}
+
+/* FOOTER */
+.footer{max-width:1120px;margin:40px auto 0;text-align:center;font-size:10px;color:var(--m);padding-top:20px;border-top:1px solid var(--b);line-height:2}
+
+/* CATEGORY COLORS */
+.cat-regent    {--cc:var(--gold);   --sec-dot:var(--gold);   --bb:rgba(201,168,76,.3); --bc:var(--gold);   --bg2:rgba(201,168,76,.07)}
+.cat-oceania   {--cc:var(--teal);   --sec-dot:var(--teal);   --bb:rgba(61,191,176,.3); --bc:var(--teal);   --bg2:rgba(61,191,176,.07)}
+.cat-vista     {--cc:var(--blue);   --sec-dot:var(--blue);   --bb:rgba(92,164,232,.3); --bc:var(--blue);   --bg2:rgba(92,164,232,.07)}
+.cat-splendor  {--cc:var(--rose);   --sec-dot:var(--rose);   --bb:rgba(224,96,112,.3); --bc:var(--rose);   --bg2:rgba(224,96,112,.07)}
+.cat-silversea {--cc:var(--purple); --sec-dot:var(--purple); --bb:rgba(155,111,224,.3);--bc:var(--purple); --bg2:rgba(155,111,224,.07)}
+.cat-fs        {--cc:var(--sage);   --sec-dot:var(--sage);   --bb:rgba(91,168,122,.3); --bc:var(--sage);   --bg2:rgba(91,168,122,.07)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-wrap">
+    <div class="logo-icon">&#9875;</div>
+    <div>
+      <div class="logo-title">CruiseStudio Blog Preview</div>
+      <div class="logo-sub">Luxury Cruise Content · 결과물 뷰어</div>
+      <div class="logo-count">33 posts &middot; 6 선사 &middot; CruiseStudio Output</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="header-date">2026-03-13</div>
+    <div class="header-stat">33 <span>posts published</span></div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="stats">
+    <div class="stat-item"><div class="stat-val">33</div><div class="stat-lbl">Total Posts</div></div>
+    <div class="stat-item"><div class="stat-val">6</div><div class="stat-lbl">Lines / Ships</div></div>
+    <div class="stat-item"><div class="stat-val">15</div><div class="stat-lbl">Regent Posts</div></div>
+    <div class="stat-item"><div class="stat-val">10</div><div class="stat-lbl">Oceania Posts</div></div>
+    <div class="stat-item"><div class="stat-val">4</div><div class="stat-lbl">Vista Posts</div></div>
+    <div class="stat-item"><div class="stat-val">4</div><div class="stat-lbl">Other Lines</div></div>
+  </div>
+
+  <!-- REGENT SEVEN SEAS GRANDEUR -->
+  <div class="section">
+    <div class="sec-hdr">
+      <div class="sec-dot" style="background:var(--gold);box-shadow:0 0 6px var(--gold)"></div>
+      <div class="sec-label">Regent Seven Seas · Grandeur &amp; Splendor</div>
+      <div class="sec-line"></div>
+      <div class="sec-cnt">15 posts</div>
+    </div>
+    <div class="grid">
+
+      <a class="card cat-regent" href="posts/post_20260225_001_final.html">
+        <div class="card-top">
+          <span class="card-badge">그랜저 리뷰</span>
+          <span class="card-ver">v1</span>
+        </div>
+        <div class="card-title">리젠트 세븐씨즈 그랜저 솔직 리뷰 — 럭셔리 크루즈 7박, 크루즈 초보가 직접 타봤습니다</div>
+        <div class="card-date">
+          <span class="card-file">post_20260225_001_final.html</span>
+          <span>2026-02-25</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-regent" href="posts/post_20260225_series01_final.html">
+        <div class="card-top">
+          <span class="card-badge">그랜저 시리즈 1편</span>
+          <span class="card-ver">v1</span>
+        </div>
+        <div class="card-title">럭셔리 크루즈, 알고 나면 다시는 못 떠나요 — 리젠트 세븐씨즈 그랜저 1편</div>
+        <div class="card-date">
+          <span class="card-file">series01_final.html</span>
+          <span>2026-02-25</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-regent" href="posts/post_20260225_series01_v2_final.html">
+        <div class="card-top">
+          <span class="card-badge">그랜저 시리즈 1편</span>
+          <span class="card-ver">v2</span>
+        </div>
+        <div class="card-title">리젠트 세븐씨즈 그랜저 — 조용하고 품격 있는 항해를 원하는 분을 위한 안내 (1편)</div>
+        <div class="card-date">
+          <span class="card-file">series01_v2_final.html</span>
+          <span>2026-02-25</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-regent" href="posts/post_20260225_series01_v3_final.html">
+        <div class="card-top">
+          <span class="card-badge">그랜저 시리즈 1편</span>
+          <span class="card-ver">v3</span>
+        </div>
+        <div class="card-title">리젠트 세븐씨즈 그랜저 — 조용하고 품격 있는 항해를 원하는 분을 위한 안내 (1편)</div>
+        <div class="card-date">
+          <span class="card-file">series01_v3_final.html</span>
+          <span>2026-02-25</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-regent" href="posts/post_20260225_series02_final.html">
+        <div class="card-top">
+          <span class="card-badge">그랜저 시리즈 2편</span>
+          <span class="card-ver">v1</span>
+        </div>
+        <div class="card-title">배 안에서 뭘 먹고 어디서 자냐고요? — 세븐씨즈 그랜저 선박 하드웨어 완전 분석</div>
+        <div class="card-date">
+          <span class="card-file">series02_final.html</span>
+          <span>2026-02-25</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-regent" href="posts/post_20260225_series02_v2_final.html">
+        <div class="card-top">
+          <span class="card-badge">그랜저 시리즈 2편</span>
+          <span class="card-ver">v2</span>
+        </div>
+        <div class="card-title">Seven Seas Grandeur의 공간들 — 럭셔리가 디테일 속에 있는 이유 (2편)</div>
+        <div class="card-date">
+          <span class="card-file">series02_v2_final.html</span>
+          <span>2026-02-25</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-regent" href="posts/post_20260225_series02_v3_final.html">
+        <div class="card-top">
+          <span class="card-badge">그랜저 시리즈 2편</span>
+          <span class="card-ver">v3</span>
+        </div>
+        <div class="card-title">Seven Seas Grandeur의 공간들 — 럭셔리가 디테일 속에 있는 이유 (2편)</div>
+        <div class="card-date">
+          <span class="card-file">series02_v3_final.html</span>
+          <span>2026-02-25</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-regent" href="posts/post_20260225_series03_final.html">
+        <div class="card-top">
+          <span class="card-badge">그랜저 시리즈 3편</span>
+          <span class="card-ver">v1</span>
+        </div>
+        <div class="card-title">리젠트 세븐씨즈 그랜저 3편 — 서비스·예술·분위기, 그리고 3부작 총결산</div>
+        <div class="card-date">
+          <span class="card-file">series03_final.html</span>
+          <span>2026-02-25</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-regent" href="posts/post_20260225_series03_v2_final.html">
+        <div class="card-top">
+          <span class="card-badge">그랜저 시리즈 3편</span>
+          <span class="card-ver">v2</span>
+        </div>
+        <div class="card-title">시간을 의미 있게 소비하는 방법 — 예술, 서비스, 그리고 Seven Seas Grandeur의 세계 (3편·완결)</div>
+        <div class="card-date">
+          <span class="card-file">series03_v2_final.html</span>
+          <span>2026-02-25</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-regent" href="posts/post_20260225_series03_v3_final.html">
+        <div class="card-top">
+          <span class="card-badge">그랜저 시리즈 3편</span>
+          <span class="card-ver">v3</span>
+        </div>
+        <div class="card-title">시간을 의미 있게 소비하는 방법 — 예술, 서비스, 그리고 Seven Seas Grandeur의 세계 (3편·완결)</div>
+        <div class="card-date">
+          <span class="card-file">series03_v3_final.html</span>
+          <span>2026-02-25</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-regent" href="posts/post_20260226_grandeur01_final.html">
+        <div class="card-top">
+          <span class="card-badge">그랜저 심층 1</span>
+        </div>
+        <div class="card-title">세계에서 가장 럭셔리한 크루즈라는 타이틀 — 리젠트 세븐씨즈 그랜저, 72시간의 기록</div>
+        <div class="card-date">
+          <span class="card-file">grandeur01_final.html</span>
+          <span>2026-02-26</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-regent" href="posts/post_20260226_grandeur02_final.html">
+        <div class="card-top">
+          <span class="card-badge">그랜저 심층 2</span>
+        </div>
+        <div class="card-title">청구서 없는 미식 항해 — 리젠트 세븐씨즈 그랜저 다이닝 완전 가이드</div>
+        <div class="card-date">
+          <span class="card-file">grandeur02_final.html</span>
+          <span>2026-02-26</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-regent" href="posts/post_20260226_grandeur03_final.html">
+        <div class="card-top">
+          <span class="card-badge">그랜저 심층 3</span>
+        </div>
+        <div class="card-title">리젠트 세븐씨즈 그랜저 7C 스위트 — 800sqft, 자쿠지 욕조, 아쿠아 디 파르마가 있는 바다 위의 레지던스</div>
+        <div class="card-date">
+          <span class="card-file">grandeur03_final.html</span>
+          <span>2026-02-26</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-regent" href="posts/post_20260226_grandeur04_final.html">
+        <div class="card-top">
+          <span class="card-badge">그랜저 심층 4</span>
+        </div>
+        <div class="card-title">파베르제 에그가 상주하는 배 — 리젠트 세븐씨즈 그랜저의 예술과 문화 공간</div>
+        <div class="card-date">
+          <span class="card-file">grandeur04_final.html</span>
+          <span>2026-02-26</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-regent" href="posts/post_20260226_grandeur05_final.html">
+        <div class="card-top">
+          <span class="card-badge">그랜저 심층 5</span>
+        </div>
+        <div class="card-title">메가십 vs 울트라 럭셔리 — 원더 오브 더 씨즈와 리젠트 그랜저가 같은 항구에 섰을 때</div>
+        <div class="card-date">
+          <span class="card-file">grandeur05_final.html</span>
+          <span>2026-02-26</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- REGENT SPLENDOR -->
+  <div class="section">
+    <div class="sec-hdr">
+      <div class="sec-dot" style="background:var(--rose);box-shadow:0 0 6px var(--rose)"></div>
+      <div class="sec-label">Regent Seven Seas · Splendor</div>
+      <div class="sec-line"></div>
+      <div class="sec-cnt">2 posts</div>
+    </div>
+    <div class="grid">
+
+      <a class="card cat-splendor" href="posts/post_20260227_002_final.html">
+        <div class="card-top">
+          <span class="card-badge">스플렌더 허니문</span>
+        </div>
+        <div class="card-title">지중해 위의 허니문 — 리젠트 세븐시즈 스플렌더, 바르셀로나에서 산토리니까지</div>
+        <div class="card-date">
+          <span class="card-file">post_20260227_002_final.html</span>
+          <span>2026-02-27</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-splendor" href="posts/post_20260227_003_final.html">
+        <div class="card-top">
+          <span class="card-badge">스플렌더 체험</span>
+        </div>
+        <div class="card-title">리젠트 세븐시즈 스플렌더 — 바다 위에서만 가능한 네 가지 경험</div>
+        <div class="card-date">
+          <span class="card-file">post_20260227_003_final.html</span>
+          <span>2026-02-27</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- OCEANIA MARINA -->
+  <div class="section">
+    <div class="sec-hdr">
+      <div class="sec-dot" style="background:var(--teal);box-shadow:0 0 6px var(--teal)"></div>
+      <div class="sec-label">Oceania Cruises · Marina</div>
+      <div class="sec-line"></div>
+      <div class="sec-cnt">10 posts</div>
+    </div>
+    <div class="grid">
+
+      <a class="card cat-oceania" href="posts/post_20260226_004_final.html">
+        <div class="card-top">
+          <span class="card-badge">마리나 소개</span>
+        </div>
+        <div class="card-title">오셔니아 마리나 — 미식과 우아함이 교차하는 바다 위의 공간</div>
+        <div class="card-date">
+          <span class="card-file">post_20260226_004_final.html</span>
+          <span>2026-02-26</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-oceania" href="posts/post_20260226_005_final.html">
+        <div class="card-top">
+          <span class="card-badge">마리나 스위트</span>
+        </div>
+        <div class="card-title">오셔니아 마리나 스위트 완전 가이드 — 오너 스위트부터 베란다까지</div>
+        <div class="card-date">
+          <span class="card-file">post_20260226_005_final.html</span>
+          <span>2026-02-26</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-oceania" href="posts/post_20260226_006_final.html">
+        <div class="card-top">
+          <span class="card-badge">마리나 24시간</span>
+          <span class="card-ver">v1</span>
+        </div>
+        <div class="card-title">프라이빗한 바다 위의 하루 — 오셔니아 마리나에서 보내는 24시간</div>
+        <div class="card-date">
+          <span class="card-file">post_20260226_006_final.html</span>
+          <span>2026-02-26</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-oceania" href="posts/post_20260226_series01_final.html">
+        <div class="card-top">
+          <span class="card-badge">마리나 시리즈 1편</span>
+        </div>
+        <div class="card-title">오세아니아 마리나 — 바다 위에서 만나는 미식의 본질 | 럭셔리 크루즈 다이닝</div>
+        <div class="card-date">
+          <span class="card-file">20260226_series01_final.html</span>
+          <span>2026-02-26</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-oceania" href="posts/post_20260226_series02_final.html">
+        <div class="card-top">
+          <span class="card-badge">마리나 시리즈 2편</span>
+        </div>
+        <div class="card-title">오세아니아 마리나 객실 등급별 완전 비교 — 오너스위트부터 베란다까지</div>
+        <div class="card-date">
+          <span class="card-file">20260226_series02_final.html</span>
+          <span>2026-02-26</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-oceania" href="posts/post_20260226_series03_final.html">
+        <div class="card-top">
+          <span class="card-badge">마리나 시리즈 3편</span>
+        </div>
+        <div class="card-title">럭셔리 크루즈 입문 가이드 — 오세아니아 마리나로 여는 첫 어퍼 프리미엄 항해</div>
+        <div class="card-date">
+          <span class="card-file">20260226_series03_final.html</span>
+          <span>2026-02-26</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-oceania" href="posts/post_20260227_001_final.html">
+        <div class="card-top">
+          <span class="card-badge">마리나 24시간</span>
+          <span class="card-ver">v2</span>
+        </div>
+        <div class="card-title">프라이빗한 바다 위의 하루 — 오셔니아 마리나에서 보내는 24시간</div>
+        <div class="card-date">
+          <span class="card-file">post_20260227_001_final.html</span>
+          <span>2026-02-27</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-oceania" href="posts/post_20260303_001_final.html">
+        <div class="card-top">
+          <span class="card-badge">마리나 완전 가이드</span>
+        </div>
+        <div class="card-title">오셔니아 마리나 완전 가이드 — 7개 레스토랑부터 오너스위트까지</div>
+        <div class="card-date">
+          <span class="card-file">post_20260303_001_final.html</span>
+          <span>2026-03-03</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- OCEANIA VISTA -->
+  <div class="section">
+    <div class="sec-hdr">
+      <div class="sec-dot" style="background:var(--blue);box-shadow:0 0 6px var(--blue)"></div>
+      <div class="sec-label">Oceania Cruises · Vista</div>
+      <div class="sec-line"></div>
+      <div class="sec-cnt">4 posts</div>
+    </div>
+    <div class="grid">
+
+      <a class="card cat-vista" href="posts/post_20260226_vista01_final.html">
+        <div class="card-top">
+          <span class="card-badge">비스타 소개</span>
+        </div>
+        <div class="card-title">오세아니아 비스타, 12년 만의 신조선이 바꾼 어퍼 프리미엄의 기준</div>
+        <div class="card-date">
+          <span class="card-file">vista01_final.html</span>
+          <span>2026-02-26</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-vista" href="posts/post_20260226_vista02_final.html">
+        <div class="card-top">
+          <span class="card-badge">비스타 다이닝</span>
+        </div>
+        <div class="card-title">바다 위 최고의 요리라는 약속 — 오세아니아 비스타 다이닝 리포트</div>
+        <div class="card-date">
+          <span class="card-file">vista02_final.html</span>
+          <span>2026-02-26</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-vista" href="posts/post_20260226_vista03_final.html">
+        <div class="card-top">
+          <span class="card-badge">비스타 항차</span>
+        </div>
+        <div class="card-title">10일, 4개국, 10개 항구 — 오세아니아 비스타 지중해 항차의 매력</div>
+        <div class="card-date">
+          <span class="card-file">vista03_final.html</span>
+          <span>2026-02-26</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-vista" href="posts/post_20260226_vista04_final.html">
+        <div class="card-top">
+          <span class="card-badge">비스타 비교</span>
+        </div>
+        <div class="card-title">어퍼 프리미엄 크루즈, 어디에 탑승할 것인가 — 오세아니아 비스타와 경쟁 선사 비교</div>
+        <div class="card-date">
+          <span class="card-file">vista04_final.html</span>
+          <span>2026-02-26</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- SILVERSEA -->
+  <div class="section">
+    <div class="sec-hdr">
+      <div class="sec-dot" style="background:var(--purple);box-shadow:0 0 6px var(--purple)"></div>
+      <div class="sec-label">Silversea · Silver Nova</div>
+      <div class="sec-line"></div>
+      <div class="sec-cnt">1 post</div>
+    </div>
+    <div class="grid">
+
+      <a class="card cat-silversea" href="posts/post_20260227_004_final.html">
+        <div class="card-top">
+          <span class="card-badge">실버노바 다이닝</span>
+        </div>
+        <div class="card-title">실버시 실버노바 — 기항지의 맛이 식탁 위에 오르는 항해</div>
+        <div class="card-date">
+          <span class="card-file">post_20260227_004_final.html</span>
+          <span>2026-02-27</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- FOUR SEASONS -->
+  <div class="section">
+    <div class="sec-hdr">
+      <div class="sec-dot" style="background:var(--sage);box-shadow:0 0 6px var(--sage)"></div>
+      <div class="sec-label">Four Seasons Yacht · FS I</div>
+      <div class="sec-line"></div>
+      <div class="sec-cnt">3 posts</div>
+    </div>
+    <div class="grid">
+
+      <a class="card cat-fs" href="posts/post_20260228_001_final.html">
+        <div class="card-top">
+          <span class="card-badge">FS 요트 소개</span>
+        </div>
+        <div class="card-title">포시즌스가 바다로 간 이유 — 호텔의 DNA는 수평선 위에서도 유효한가</div>
+        <div class="card-date">
+          <span class="card-file">post_20260228_001_final.html</span>
+          <span>2026-02-28</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-fs" href="posts/post_20260228_002_final.html">
+        <div class="card-top">
+          <span class="card-badge">FS 스위트</span>
+        </div>
+        <div class="card-title">바다 위의 저택 — Four Seasons I, 스위트 완전 해부</div>
+        <div class="card-date">
+          <span class="card-file">post_20260228_002_final.html</span>
+          <span>2026-02-28</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="card cat-fs" href="posts/post_20260228_003_final.html">
+        <div class="card-top">
+          <span class="card-badge">FS 프리뷰</span>
+        </div>
+        <div class="card-title">95개의 스위트, 1:1의 약속 — Four Seasons I 완전 프리뷰</div>
+        <div class="card-date">
+          <span class="card-file">post_20260228_003_final.html</span>
+          <span>2026-02-28</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  CruiseStudio Blog Preview &middot; galincia-hub/blog-preview &middot; GitHub Pages<br>
+  Cruise International · 내부 콘텐츠 결과물 뷰어
+</div>
+
+</body>
+</html>
